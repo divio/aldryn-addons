@@ -107,9 +107,11 @@ def load(settings):
         if os.path.isabs(addon_name):
             addon_path = addon_name
             addon_name = os.path.basename(os.path.normpath(addon_path))
+            settings_json_path = None
         else:
             addon_dev_path = os.path.join(settings['ADDONS_DEV_DIR'], addon_name)
             addon_normal_path = os.path.join(settings['ADDONS_DIR'], addon_name)
+            settings_json_path = os.path.join(addon_normal_path, 'settings.json')
             if os.path.exists(addon_dev_path):
                 addon_path = addon_dev_path
             elif os.path.exists(addon_normal_path):
@@ -120,18 +122,23 @@ def load(settings):
                         addon_name, addon_dev_path, addon_normal_path,
                     )
                 )
-        load_addon_settings(name=addon_name, path=addon_path, settings=settings)
+        load_addon_settings(
+            name=addon_name,
+            path=addon_path,
+            settings=settings,
+            settings_json_path=settings_json_path,
+        )
         debug_count = dump(settings, debug_count, addon_name)
 
 
-def load_addon_settings(name, path, settings):
-    addon_json_path = os.path.join(path, 'addon.json')
+def load_addon_settings(name, path, settings, **kwargs):
+    addon_json_path = kwargs.get('addon_json_path', os.path.join(path, 'addon.json'))
     addon_json = utils.json_from_file(addon_json_path)
-    addon_settings_path = os.path.join(path, 'settings.json')
+    settings_json_path = kwargs.get('settings_json_path', os.path.join(path, 'settings.json'))
     # TODO: once we have optional "secrets" support on fields:
     #       load the secret settings from environment variables here and add
     #       them to addon_settings
-    aldryn_config_py_path = os.path.join(path, 'aldryn_config.py')
+    aldryn_config_py_path = kwargs.get('aldryn_config_py_path', os.path.join(path, 'aldryn_config.py'))
     if os.path.exists(aldryn_config_py_path):
         aldryn_config = imp.load_source(
             '{}_{}'.format(name, uuid.uuid4()).replace('-', '_'),
@@ -143,7 +150,13 @@ def load_addon_settings(name, path, settings):
         # dict with just their generated settings. So we also update the settings
         # dict here, just to be sure.
         if hasattr(aldryn_config, 'Form'):
-            addon_settings = utils.json_from_file(addon_settings_path)
+            try:
+                addon_settings = utils.json_from_file(settings_json_path)
+            except (ValueError, OSError):
+                try:
+                    addon_settings = utils.json_from_file(os.path.join(path, 'settings.json'))
+                except (ValueError, OSError):
+                    addon_settings = {}
             settings.update(
                 aldryn_config.Form().to_settings(addon_settings, settings)
             )
