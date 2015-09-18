@@ -12,7 +12,7 @@ setup(
     url='https://github.com/aldryn/aldryn-addons',
     packages=find_packages(),
     install_requires=(
-        'Django',
+        # 'Django',  # intentionally left out as a workaround for pips ignorance regarding exact versions to install
         'django-getenv',
     ),
     include_package_data=True,
