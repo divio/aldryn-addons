@@ -49,7 +49,11 @@ class SettingsDictWrapper(IterableUserDict):
         return IterableUserDict.__setitem__(self, key, value)
 
 
-def load(settings):
+def load(settings, **kwargs):
+    global_debug = utils.boolean_ish(os.environ.get('ALDRYN_ADDONS_DEBUG', False))
+    # fallback to global debug flag
+    debug = kwargs.get('debug', global_debug)
+
     settings = SettingsDictWrapper(
         settings,
         watched_keys=global_settings.keys(),
@@ -69,12 +73,17 @@ def load(settings):
     )
     utils.mkdirs(settings['ADDONS_DEV_DIR'])
     utils.mkdirs(settings['ADDONS_DIR'])
-    # TODO: .debug is not multi-process safe!
-    debug_path = os.path.join(settings['ADDONS_DIR'], '.debug')
-    shutil.rmtree(debug_path, ignore_errors=True)
-    utils.mkdirs(debug_path)
+
+    if debug:
+        # TODO: .debug is not multi-process safe!
+        debug_path = os.path.join(settings['ADDONS_DIR'], '.debug')
+        shutil.rmtree(debug_path, ignore_errors=True)
+        utils.mkdirs(debug_path)
 
     def dump(obj, count, name):
+        if not debug:
+            # do nothing if debug is not turned on
+            return 0
         dump_name = '{}-{}.dump'.format(count_str(count), name)
         dump_path = os.path.join(debug_path, dump_name)
         save_settings_dump(obj, dump_path)
@@ -82,6 +91,7 @@ def load(settings):
 
     debug_count = 0
     debug_count = dump(settings, debug_count, 'initial')
+
     # load global defaults
     for key, value in global_settings.items():
         if key not in settings:
@@ -90,11 +100,14 @@ def load(settings):
             settings.set(key, value)
 
     debug_count = dump(settings, debug_count, 'load-globals')
+
     # normalise tuple settings to lists
     for key, value in settings.items():
         if isinstance(value, tuple):
             settings.set(key, list(value))
+
     debug_count = dump(settings, debug_count, 'normalise')
+
     # add Addon default settings if they are not there yet
     settings.setdefault('ADDON_URLS', [])
     settings.setdefault('ADDON_URLS_I18N', [])
