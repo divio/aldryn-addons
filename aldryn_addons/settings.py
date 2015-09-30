@@ -49,7 +49,11 @@ class SettingsDictWrapper(IterableUserDict):
         return IterableUserDict.__setitem__(self, key, value)
 
 
-def load(settings, debug=False):
+def load(settings, **kwargs):
+    global_debug = utils.boolean_ish(os.environ.get('ALDRYN_ADDONS_DEBUG', False))
+    # fallback to global debug flag
+    debug = kwargs.get('debug', global_debug)
+
     settings = SettingsDictWrapper(
         settings,
         watched_keys=global_settings.keys(),
