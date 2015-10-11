@@ -7,8 +7,8 @@ import shutil
 import uuid
 from . import utils
 from .utils import global_settings
+from .exceptions import ImproperlyConfigured
 from pprint import pformat
-from django.core.exceptions import ImproperlyConfigured
 
 
 def save_settings_dump(settings, path):
