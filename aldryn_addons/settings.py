@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from UserDict import IterableUserDict
+try:
+	from collections import UserDict as IterableUserDict   # Python 3
+except ImportError:
+	from UserDict import IterableUserDict                  # Python 2
 from functools import partial
 import imp
 import os
