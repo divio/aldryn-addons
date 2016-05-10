@@ -7,6 +7,7 @@ REQUIREMENTS = [
     # exact versions to install
     # 'Django',
     'django-getenv',
+    'six',
 ]
 
 CLASSIFIERS = [
