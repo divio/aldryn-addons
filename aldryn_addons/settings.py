@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-try:
-	from collections import UserDict as IterableUserDict   # Python 3
-except ImportError:
-	from UserDict import IterableUserDict                  # Python 2
 from functools import partial
 import imp
 import os
@@ -12,6 +8,8 @@ from . import utils
 from .utils import global_settings
 from .exceptions import ImproperlyConfigured
 from pprint import pformat
+import six
+from six.moves import UserDict
 
 
 def save_settings_dump(settings, path):
@@ -29,7 +27,7 @@ def count_str(number):
     return '{0:05d}'.format(number)
 
 
-class SettingsDictWrapper(IterableUserDict):
+class SettingsDictWrapper(UserDict):
     """
     hack to get around detecting if an altered setting was actually explicitly
     set or just happens to be the same as the django default.
@@ -46,10 +44,55 @@ class SettingsDictWrapper(IterableUserDict):
     def __setitem__(self, key, value):
         if key in self._watched_keys:
             self.altered_keys.add(key)
-        return self.set(key, value)
+        self.set(key, value)
 
     def set(self, key, value):
-        return IterableUserDict.__setitem__(self, key, value)
+        UserDict.__setitem__(self, key, value)
+
+    def update(self, *args, **kwargs):
+        if six.PY3:
+            UserDict.update(self, *args, **kwargs)
+        else:
+            self._update_py2(*args, **kwargs)
+
+    def _update_py2(*args, **kwargs):
+        # copied from python2 standardlib UserDict.update() and altered a little
+        # (see commented out lines below)
+        if not args:
+            raise TypeError("descriptor 'update' of 'UserDict' object "
+                            "needs an argument")
+        self = args[0]
+        args = args[1:]
+        if len(args) > 1:
+            raise TypeError('expected at most 1 arguments, got %d' % len(args))
+        if args:
+            dict = args[0]
+        elif 'dict' in kwargs:
+            dict = kwargs.pop('dict')
+            import warnings
+            warnings.warn("Passing 'dict' as keyword argument is deprecated",
+                          PendingDeprecationWarning, stacklevel=2)
+        else:
+            dict = None
+        if dict is None:
+            pass
+        # elif isinstance(dict, UserDict):
+        #     self.data.update(dict.data)
+        # elif isinstance(dict, type({})) or not hasattr(dict, 'items'):
+        elif not hasattr(dict, 'items'):
+            # this case is not covered for altered state tracking
+            self.data.update(dict)
+        else:
+            for k, v in dict.items():
+                self[k] = v
+        if len(kwargs):
+            # self.data.update(kwargs)
+            for k, v in kwargs.items():
+                self[k] = v
+
+    def update_without_tracking_altered_state(self, a_dict):
+        for key, value in a_dict.items():
+            self.set(key, value)
 
 
 def load(settings, **kwargs):
@@ -66,6 +109,7 @@ def load(settings, **kwargs):
         'BASE_DIR',
         os.path.dirname(os.path.abspath(settings['__file__']))
     )
+
     settings['ADDONS_DIR'] = env(
         'ADDONS_DIR',
         os.path.join(settings['BASE_DIR'], 'addons')
@@ -173,8 +217,8 @@ def load_addon_settings(name, path, settings, **kwargs):
                     addon_settings = utils.json_from_file(os.path.join(path, 'settings.json'))
                 except (ValueError, OSError):
                     addon_settings = {}
-            settings.update(
-                aldryn_config.Form().to_settings(addon_settings, settings)
+            settings.update_without_tracking_altered_state(
+                aldryn_config.Form().to_settings(addon_settings, settings),
             )
     # backwards compatibility for when installed-apps was defined in addon.json
     for app in addon_json.get('installed-apps', []):
