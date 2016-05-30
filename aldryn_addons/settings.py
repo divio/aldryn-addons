@@ -217,6 +217,14 @@ def load_addon_settings(name, path, settings, **kwargs):
                     addon_settings = utils.json_from_file(os.path.join(path, 'settings.json'))
                 except (ValueError, OSError):
                     addon_settings = {}
+
+            # fill up remaining fields in
+            # addon_settings with defaults
+            form = aldryn_config.Form()
+            for field_name, field in form._fields:
+                if field_name not in addon_settings:
+                    addon_settings[field_name] = field.initial
+
             settings.update_without_tracking_altered_state(
                 aldryn_config.Form().to_settings(addon_settings, settings),
             )
