@@ -27,6 +27,8 @@ def json_from_file(path):
             return json.load(fobj)
     except ValueError as e:
         raise ValueError('{} ({})'.format(e, path))
+    except IOError:
+        return {}
 
 
 def mkdirs(path):
