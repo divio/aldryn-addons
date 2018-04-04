@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-1.0.3 (unreleased)
+1.0.3 (2018-04-04)
 ------------------
 
 - Added Django 2.0 support
