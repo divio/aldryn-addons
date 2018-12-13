@@ -237,8 +237,8 @@ def load_addon_settings(name, path, settings, **kwargs):
 
     if 'MIDDLEWARE_CLASSES' in settings:
         # Django<2
-        settings['MIDDLEWARE_CLASSES'] = utils.remove_duplicates(settings['MIDDLEWARE_CLASSES'])
+        settings['MIDDLEWARE_CLASSES'] = utils.remove_duplicates(getattr(settings, 'MIDDLEWARE_CLASSES', []))
 
     if 'MIDDLEWARE' in settings:
         # Django>=1.11
-        settings['MIDDLEWARE'] = utils.remove_duplicates(settings['MIDDLEWARE'])
+        settings['MIDDLEWARE'] = utils.remove_duplicates(getattr(settings, 'MIDDLEWARE', []))
