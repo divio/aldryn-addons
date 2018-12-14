@@ -235,7 +235,7 @@ def load_addon_settings(name, path, settings, **kwargs):
     # remove duplicates
     settings['INSTALLED_APPS'] = utils.remove_duplicates(settings['INSTALLED_APPS'])
 
-    if settings.get('MIDDLEWARE_CLASSES') is not None:
+    if 'MIDDLEWARE_CLASSES' in settings:
         # Django<2
         settings['MIDDLEWARE_CLASSES'] = utils.remove_duplicates(settings['MIDDLEWARE_CLASSES'])
 
