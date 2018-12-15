@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.4 (unreleased)
+1.0.4 (2018-12-15)
 ==================
 
 * Fixed error ``'NoneType' object is not iterable`` for getting
