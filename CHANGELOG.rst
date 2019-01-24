@@ -1,5 +1,14 @@
+=========
 Changelog
 =========
+
+
+1.0.5 (unreleased)
+==================
+
+* Added test matrix
+* Adapted code base to align with other supported addons
+
 
 1.0.4 (2018-12-15)
 ==================
@@ -26,7 +35,7 @@ Changelog
 * First stab at python3 compatibility
 
 
-0.1 (2015-08-27)
+0.1.0 (2015-08-27)
 ==================
 
 * Initial release
