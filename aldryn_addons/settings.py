@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
-from functools import partial
 import imp
 import os
 import shutil
 import uuid
-from . import utils
-from .utils import global_settings
-from .exceptions import ImproperlyConfigured
+from functools import partial
 from pprint import pformat
+
 import six
 from six.moves import UserDict
+
+from . import utils
+from .exceptions import ImproperlyConfigured
+from .utils import global_settings
 
 
 def save_settings_dump(settings, path):

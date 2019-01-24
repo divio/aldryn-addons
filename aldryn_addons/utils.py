@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-import six
-from getenv import env, ImproperlyConfigured
+
 from django.conf import global_settings as _gs
+
+import six
+from getenv import ImproperlyConfigured, env
+
+
 global_settings = {key: value for key, value in _gs.__dict__.items() if key.upper() == key}
 
 
