@@ -1,4 +1,6 @@
 {
     "package-name": "aldryn-addons",
-    "installed-apps": []
+    "installed-apps": [
+        "aldryn_addons"
+    ]
 }
