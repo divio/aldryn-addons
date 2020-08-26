@@ -156,6 +156,16 @@ def load(settings, **kwargs):
             settings_json_path=settings_json_path,
         )
         debug_count = dump(settings, debug_count, addon_name)
+    # The Divio Cloud settings system through Aldryn Addons overrides the
+    # default Django settings triggering an error in Django >= 3.1:
+    # https://github.com/django/django/blob/d907371ef99a1e4ca6bc1660f57d81f265750984/django/conf/__init__.py#L195-L202
+    # To remedy this, we need to delete the settings when they are not
+    # overridden by the user (using the Django defaults)
+    if DJANGO_GTE_31:
+        if settings["PASSWORD_RESET_TIMEOUT"] and settings["PASSWORD_RESET_TIMEOUT"] == 60 * 60 * 24 * 3:
+            del settings["PASSWORD_RESET_TIMEOUT"]
+        if settings["PASSWORD_RESET_TIMEOUT_DAYS"] and settings["PASSWORD_RESET_TIMEOUT_DAYS"] == 3:
+            del settings["PASSWORD_RESET_TIMEOUT_DAYS"]
 
 
 def load_addon_settings(name, path, settings, **kwargs):
