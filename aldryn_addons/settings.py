@@ -1,17 +1,20 @@
-# -*- coding: utf-8 -*-
 import imp
 import os
 import shutil
 import uuid
+from collections import UserDict
 from functools import partial
 from pprint import pformat
 
-import six
-from six.moves import UserDict
+from django import get_version
+from distutils.version import LooseVersion
 
 from . import utils
 from .exceptions import ImproperlyConfigured
 from .utils import global_settings
+
+
+DJANGO_GTE_31 = LooseVersion("3.1") >= LooseVersion(get_version())
 
 
 def save_settings_dump(settings, path):
@@ -52,45 +55,7 @@ class SettingsDictWrapper(UserDict):
         UserDict.__setitem__(self, key, value)
 
     def update(self, *args, **kwargs):
-        if six.PY3:
-            UserDict.update(self, *args, **kwargs)
-        else:
-            self._update_py2(*args, **kwargs)
-
-    def _update_py2(*args, **kwargs):
-        # copied from python2 standardlib UserDict.update() and altered a little
-        # (see commented out lines below)
-        if not args:
-            raise TypeError("descriptor 'update' of 'UserDict' object "
-                            "needs an argument")
-        self = args[0]
-        args = args[1:]
-        if len(args) > 1:
-            raise TypeError('expected at most 1 arguments, got %d' % len(args))
-        if args:
-            dict = args[0]
-        elif 'dict' in kwargs:
-            dict = kwargs.pop('dict')
-            import warnings
-            warnings.warn("Passing 'dict' as keyword argument is deprecated",
-                          PendingDeprecationWarning, stacklevel=2)
-        else:
-            dict = None
-        if dict is None:
-            pass
-        # elif isinstance(dict, UserDict):
-        #     self.data.update(dict.data)
-        # elif isinstance(dict, type({})) or not hasattr(dict, 'items'):
-        elif not hasattr(dict, 'items'):
-            # this case is not covered for altered state tracking
-            self.data.update(dict)
-        else:
-            for k, v in dict.items():
-                self[k] = v
-        if len(kwargs):
-            # self.data.update(kwargs)
-            for k, v in kwargs.items():
-                self[k] = v
+        UserDict.update(self, *args, **kwargs)
 
     def update_without_tracking_altered_state(self, a_dict):
         for key, value in a_dict.items():
