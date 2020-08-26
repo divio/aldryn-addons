@@ -3,11 +3,11 @@ import os
 import shutil
 import uuid
 from collections import UserDict
+from distutils.version import LooseVersion
 from functools import partial
 from pprint import pformat
 
 from django import get_version
-from distutils.version import LooseVersion
 
 from . import utils
 from .exceptions import ImproperlyConfigured
@@ -156,7 +156,7 @@ def load(settings, **kwargs):
             settings_json_path=settings_json_path,
         )
         debug_count = dump(settings, debug_count, addon_name)
-    # The Divio Cloud settings system through Aldryn Addons overrides the
+    # The Divio Cloud settings system through Aldryn Addons overrides the
     # default Django settings triggering an error in Django >= 3.1:
     # https://github.com/django/django/blob/d907371ef99a1e4ca6bc1660f57d81f265750984/django/conf/__init__.py#L195-L202
     # To remedy this, we need to delete the settings when they are not
