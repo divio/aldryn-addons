@@ -162,9 +162,9 @@ def load(settings, **kwargs):
     # To remedy this, we need to delete the settings when they are not
     # overridden by the user (using the Django defaults)
     if DJANGO_GTE_31:
-        if settings["PASSWORD_RESET_TIMEOUT"] and settings["PASSWORD_RESET_TIMEOUT"] == 60 * 60 * 24 * 3:
+        if settings.get('PASSWORD_RESET_TIMEOUT') == 60 * 60 * 24 * 3:
             del settings["PASSWORD_RESET_TIMEOUT"]
-        if settings["PASSWORD_RESET_TIMEOUT_DAYS"] and settings["PASSWORD_RESET_TIMEOUT_DAYS"] == 3:
+        if settings.get('PASSWORD_RESET_TIMEOUT_DAYS') == 3:
             del settings["PASSWORD_RESET_TIMEOUT_DAYS"]
 
 
