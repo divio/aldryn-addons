@@ -75,7 +75,7 @@ The code below is for Django 1.8 and above. For older versions of Django,
 please add the prefix parameter to ``i18n_patterns``: ``i18n_patterns('', ...``
 ::
 
-    from django.conf.urls import url, include
+    from django.urls import re_path, include
     from django.conf.urls.i18n import i18n_patterns
     import aldryn_addons.urls
 
@@ -84,7 +84,7 @@ please add the prefix parameter to ``i18n_patterns``: ``i18n_patterns('', ...``
         # add your own patterns here
     ] + aldryn_addons.urls.patterns() + i18n_patterns(
         # add your own i18n patterns here
-        url(r'^myapp/', include('myapp.urls')),
+        re_path(r'^myapp/', include('myapp.urls')),
         *aldryn_addons.urls.i18n_patterns()  # MUST be the last entry!
     )
 
@@ -149,7 +149,7 @@ You can run tests by executing::
 .. |coverage| image:: https://codecov.io/gh/divio/aldryn-addons/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/divio/aldryn-addons
 
-.. |python| image:: https://img.shields.io/badge/python-2.7%20%7C%203.4+-blue.svg
+.. |python| image:: https://img.shields.io/badge/python-3.5+-blue.svg
     :target: https://pypi.org/project/aldryn-addons/
-.. |django| image:: https://img.shields.io/badge/django-1.11%20%7C%202.1%20%7C%202.2-blue.svg
+.. |django| image:: https://img.shields.io/badge/django-2.2,%203.0,%203.1-blue.svg
     :target: https://www.djangoproject.com/

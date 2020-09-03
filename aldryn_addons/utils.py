@@ -1,22 +1,20 @@
-# -*- coding: utf-8 -*-
 import json
 import os
 
 from django.conf import global_settings as _gs
 
-import six
 from getenv import ImproperlyConfigured, env
 
 
 global_settings = {key: value for key, value in _gs.__dict__.items() if key.upper() == key}
 
 
-class NoDefault(object):
+class NoDefault:
     pass
 
 
 def boolean_ish(value):
-    if isinstance(value, six.string_types):
+    if isinstance(value, str):
         value = value.lower()
     if value in [True, 'true', '1', 'on', 'yes', 'y', 'yeah', 'yep']:
         return True

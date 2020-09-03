@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 HELPER_SETTINGS = {
     'INSTALLED_APPS': [],
     'CMS_LANGUAGES': {
@@ -14,7 +13,7 @@ HELPER_SETTINGS = {
 
 
 def run():
-    from djangocms_helper import runner
+    from app_helper import runner
     runner.cms('aldryn_addons')
 
 
