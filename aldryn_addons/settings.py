@@ -14,7 +14,7 @@ from .exceptions import ImproperlyConfigured
 from .utils import global_settings
 
 
-DJANGO_GTE_31 = LooseVersion("3.1") >= LooseVersion(get_version())
+DJANGO_GTE_31 = LooseVersion(get_version()) >= LooseVersion("3.1")
 
 
 def save_settings_dump(settings, path):
