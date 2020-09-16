@@ -3,6 +3,12 @@ Changelog
 =========
 
 
+2.0.1 (2020-09-16)
+==================
+
+* Reformatted positioning of the ``PASSWORD_RESET_TIMEOUT`` Django 3.1 adaptions
+
+
 2.0.0 (2020-09-03)
 ==================
 
