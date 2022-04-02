@@ -17,7 +17,8 @@ DJANGO_GTE_31 = LooseVersion(get_version()) >= LooseVersion("3.1")
 
 
 def save_settings_dump(settings, path):
-    to_dump = {key: value for key, value in settings.items() if key == key.upper()}
+    to_dump = {key: value for key, value in settings.items() if key ==
+               key.upper()}
     with open(path, 'w+') as fobj:
         fobj.write(
             pformat(
@@ -36,6 +37,7 @@ class SettingsDictWrapper(UserDict):
     hack to get around detecting if an altered setting was actually explicitly
     set or just happens to be the same as the django default.
     """
+
     def __init__(self, wrapped, watched_keys):
         self.data = wrapped
         self._watched_keys = watched_keys
@@ -62,7 +64,8 @@ class SettingsDictWrapper(UserDict):
 
 
 def load(settings, **kwargs):
-    global_debug = utils.boolean_ish(os.environ.get('ALDRYN_ADDONS_DEBUG', False))
+    global_debug = utils.boolean_ish(
+        os.environ.get('ALDRYN_ADDONS_DEBUG', False))
     # fallback to global debug flag
     debug = kwargs.get('debug', global_debug)
 
@@ -146,9 +149,12 @@ def load(settings, **kwargs):
             addon_name = os.path.basename(os.path.normpath(addon_path))
             settings_json_path = None
         else:
-            addon_dev_path = os.path.join(settings['ADDONS_DEV_DIR'], addon_name)
-            addon_normal_path = os.path.join(settings['ADDONS_DIR'], addon_name)
-            settings_json_path = os.path.join(addon_normal_path, 'settings.json')
+            addon_dev_path = os.path.join(
+                settings['ADDONS_DEV_DIR'], addon_name)
+            addon_normal_path = os.path.join(
+                settings['ADDONS_DIR'], addon_name)
+            settings_json_path = os.path.join(
+                addon_normal_path, 'settings.json')
             if os.path.exists(addon_dev_path):
                 addon_path = addon_dev_path
             elif os.path.exists(addon_normal_path):
@@ -169,29 +175,33 @@ def load(settings, **kwargs):
 
 
 def load_addon_settings(name, path, settings, **kwargs):
-    addon_json_path = kwargs.get('addon_json_path', os.path.join(path, 'addon.json'))
+    addon_json_path = kwargs.get(
+        'addon_json_path', os.path.join(path, 'addon.json'))
     addon_json = utils.json_from_file(addon_json_path)
-    settings_json_path = kwargs.get('settings_json_path', os.path.join(path, 'settings.json'))
+    settings_json_path = kwargs.get(
+        'settings_json_path', os.path.join(path, 'settings.json'))
     # TODO: once we have optional "secrets" support on fields:
     #       load the secret settings from environment variables here and add
     #       them to addon_settings
-    aldryn_config_py_path = kwargs.get('aldryn_config_py_path', os.path.join(path, 'aldryn_config.py'))
+    aldryn_config_py_path = kwargs.get(
+        'aldryn_config_py_path', os.path.join(path, 'aldryn_config.py'))
     if os.path.exists(aldryn_config_py_path):
         aldryn_config = imp.load_source(
             '{}_{}'.format(name, uuid.uuid4()).replace('-', '_'),
             aldryn_config_py_path,
         )
-        # Usually .to_settings() implementations will update settings in-place, as
-        # well as returning the resulting dict.
-        # But because the API is not defined clear enough, some might return a new
-        # dict with just their generated settings. So we also update the settings
-        # dict here, just to be sure.
+        # Usually .to_settings() implementations will update settings in-place,
+        # as well as returning the resulting dict.
+        # But because the API is not defined clear enough, some might return
+        # a new dict with just their generated settings. So we also update
+        # the settings dict here, just to be sure.
         if hasattr(aldryn_config, 'Form'):
             try:
                 addon_settings = utils.json_from_file(settings_json_path)
             except (ValueError, OSError):
                 try:
-                    addon_settings = utils.json_from_file(os.path.join(path, 'settings.json'))
+                    addon_settings = utils.json_from_file(
+                        os.path.join(path, 'settings.json'))
                 except (ValueError, OSError):
                     addon_settings = {}
 
@@ -210,12 +220,15 @@ def load_addon_settings(name, path, settings, **kwargs):
         if app not in settings['INSTALLED_APPS']:
             settings['INSTALLED_APPS'].append(app)
     # remove duplicates
-    settings['INSTALLED_APPS'] = utils.remove_duplicates(settings['INSTALLED_APPS'])
+    settings['INSTALLED_APPS'] = utils.remove_duplicates(
+        settings['INSTALLED_APPS'])
 
     if settings.get('MIDDLEWARE_CLASSES') is not None:
         # Django<2
-        settings['MIDDLEWARE_CLASSES'] = utils.remove_duplicates(settings['MIDDLEWARE_CLASSES'])
+        settings['MIDDLEWARE_CLASSES'] = utils.remove_duplicates(
+            settings['MIDDLEWARE_CLASSES'])
 
     if settings.get('MIDDLEWARE') is not None:
         # Django>=1.11
-        settings['MIDDLEWARE'] = utils.remove_duplicates(settings['MIDDLEWARE'])
+        settings['MIDDLEWARE'] = utils.remove_duplicates(
+            settings['MIDDLEWARE'])

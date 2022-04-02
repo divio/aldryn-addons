@@ -1,4 +1,4 @@
-from django.conf import settings, urls
+from django.conf import settings
 from django.urls import include, re_path
 
 

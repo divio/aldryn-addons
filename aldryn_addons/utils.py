@@ -4,7 +4,8 @@ import os
 from django.conf import global_settings as _gs
 from getenv import ImproperlyConfigured, env
 
-global_settings = {key: value for key, value in _gs.__dict__.items() if key.upper() == key}
+global_settings = {key: value for key,
+                   value in _gs.__dict__.items() if key.upper() == key}
 
 
 class NoDefault:
@@ -47,12 +48,14 @@ def openfile(path):
     return open(path, 'w+')
 
 
-def senv(key, default=NoDefault, required=False, settings=None, _altered_defaults=None, _defaults=None):
+def senv(key, default=NoDefault, required=False,
+         settings=None, _altered_defaults=None, _defaults=None):
     """
     return the value for key by checking the following sources:
         - the environment
         - the settings dictionary
-    if the key is in _defaults but not in _altered_defaults, don't consider the value in settings
+    if the key is in _defaults but not in _altered_defaults, don't consider
+    the value in settings
     """
     _altered_defaults = _altered_defaults or []
     _defaults = _defaults or []
@@ -60,7 +63,8 @@ def senv(key, default=NoDefault, required=False, settings=None, _altered_default
     value = env(
         key,
         settings.get(key, default)
-        if (key not in _defaults or (key in _defaults and key in _altered_defaults))
+        if (key not in _defaults
+            or (key in _defaults and key in _altered_defaults))
         else default,
     )
     if value == NoDefault:
@@ -78,7 +82,8 @@ def djsenv(key, *args, **kwargs):
     like senv, but only uses the value for django default settings if they have
     actually been altered by the user in settings.py.
     """
-    kwargs['_altered_defaults'] = getattr(kwargs.get('settings', {}), 'altered_keys', set())
+    kwargs['_altered_defaults'] = getattr(
+        kwargs.get('settings', {}), 'altered_keys', set())
     kwargs['_defaults'] = global_settings.keys()
     return senv(key, *args, **kwargs)
 
