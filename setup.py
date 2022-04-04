@@ -2,6 +2,7 @@ from setuptools import find_packages, setup
 
 from aldryn_addons import __version__
 
+
 REQUIREMENTS = [
     'django',
     'django-getenv',

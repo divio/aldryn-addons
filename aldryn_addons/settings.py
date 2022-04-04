@@ -13,6 +13,7 @@ from . import utils
 from .exceptions import ImproperlyConfigured
 from .utils import global_settings
 
+
 DJANGO_GTE_31 = LooseVersion(get_version()) >= LooseVersion("3.1")
 
 
