@@ -6,8 +6,9 @@ from django.conf import global_settings as _gs
 from getenv import ImproperlyConfigured, env
 
 
-global_settings = {key: value for key,
-                   value in _gs.__dict__.items() if key.upper() == key}
+global_settings = {
+    key: value for key, value in _gs.__dict__.items() if key.upper() == key
+}
 
 
 class NoDefault:
@@ -17,9 +18,9 @@ class NoDefault:
 def boolean_ish(value):
     if isinstance(value, str):
         value = value.lower()
-    if value in [True, 'true', '1', 'on', 'yes', 'y', 'yeah', 'yep']:
+    if value in [True, "true", "1", "on", "yes", "y", "yeah", "yep"]:
         return True
-    elif value in [False, 'false', '0', 'off', 'no', 'n', 'nope']:
+    elif value in [False, "false", "0", "off", "no", "n", "nope"]:
         return False
     return bool(value)
 
@@ -29,7 +30,7 @@ def json_from_file(path):
         with open(path) as fobj:
             return json.load(fobj)
     except ValueError as e:
-        raise ValueError('{} ({})'.format(e, path))
+        raise ValueError("{} ({})".format(e, path))
     except IOError:
         return {}
 
@@ -47,11 +48,17 @@ def openfile(path):
     opens the file, creating it and directories if needed
     """
     mkdirs(os.path.dirname(path))
-    return open(path, 'w+')
+    return open(path, "w+")
 
 
-def senv(key, default=NoDefault, required=False,
-         settings=None, _altered_defaults=None, _defaults=None):
+def senv(
+    key,
+    default=NoDefault,
+    required=False,
+    settings=None,
+    _altered_defaults=None,
+    _defaults=None,
+):
     """
     return the value for key by checking the following sources:
         - the environment
@@ -65,15 +72,17 @@ def senv(key, default=NoDefault, required=False,
     value = env(
         key,
         settings.get(key, default)
-        if (key not in _defaults
-            or (key in _defaults and key in _altered_defaults))
+        if (key not in _defaults or (key in _defaults and key in _altered_defaults))
         else default,
     )
     if value == NoDefault:
         if required:
-            raise ImproperlyConfigured((
-                "Missing required setting '{}' "
-                "(checked environment and settings)").format(key))
+            raise ImproperlyConfigured(
+                (
+                    "Missing required setting '{}' "
+                    "(checked environment and settings)"
+                ).format(key)
+            )
         else:
             value = None
     return value
@@ -84,9 +93,10 @@ def djsenv(key, *args, **kwargs):
     like senv, but only uses the value for django default settings if they have
     actually been altered by the user in settings.py.
     """
-    kwargs['_altered_defaults'] = getattr(
-        kwargs.get('settings', {}), 'altered_keys', set())
-    kwargs['_defaults'] = global_settings.keys()
+    kwargs["_altered_defaults"] = getattr(
+        kwargs.get("settings", {}), "altered_keys", set()
+    )
+    kwargs["_defaults"] = global_settings.keys()
     return senv(key, *args, **kwargs)
 
 
