@@ -4,5 +4,3 @@ https://github.com/FinalAngel/django-app-helper/archive/refs/heads/develop.zip#e
 coverage
 isort
 flake8
-# needed for the build to work
-uwsgi
