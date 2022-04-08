@@ -144,8 +144,8 @@ You can run tests by executing::
 
 .. |pypi| image:: https://badge.fury.io/py/aldryn-addons.svg
     :target: http://badge.fury.io/py/aldryn-addons
-.. |build| image:: https://travis-ci.org/divio/aldryn-addons.svg?branch=master
-    :target: https://travis-ci.org/divio/aldryn-addons
+.. |build| image:: https://github.com/divio/aldryn-addons/actions/workflows/default.yml/badge.svg?branch=master
+    :target: https://github.com/divio/aldryn-addons/actions
 .. |coverage| image:: https://codecov.io/gh/divio/aldryn-addons/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/divio/aldryn-addons
 

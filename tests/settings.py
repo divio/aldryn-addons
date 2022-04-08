@@ -1,21 +1,28 @@
 #!/usr/bin/env python
 HELPER_SETTINGS = {
-    'INSTALLED_APPS': [],
-    'CMS_LANGUAGES': {
-        1: [{
-            'code': 'en',
-            'name': 'English',
-        }]
+    "INSTALLED_APPS": [],
+    "SECRET_KEY": "some-secret",
+    "ALLOWED_HOSTS": ["localhost"],
+    "CMS_LANGUAGES": {
+        1: [
+            {
+                "code": "en",
+                "name": "English",
+            }
+        ]
     },
-    'LANGUAGE_CODE': 'en',
-    'ALLOWED_HOSTS': ['localhost'],
+    "LANGUAGE_CODE": "en",
 }
 
 
 def run():
     from app_helper import runner
-    runner.cms('aldryn_addons')
+
+    try:
+        runner.cms("aldryn_addons")
+    except ImportError:
+        runner.run("aldryn_addons")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()
