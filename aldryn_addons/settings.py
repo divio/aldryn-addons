@@ -107,6 +107,13 @@ def load(settings, **kwargs):
     # load global defaults
     for key, value in global_settings.items():
         if key not in settings:
+            if key in ["DEFAULT_FILE_STORAGE", "STATICFILES_STORAGE"]:
+                # Since django 4.2, setting these defaults create issues with
+                # override detection in django.
+                # https://github.com/django/django/blob/4.2/django/conf/__init__.py#L269
+                # https://github.com/django/django/blob/4.2/django/conf/__init__.py#L276
+                # Because of this, we do not set these values at all.
+                continue
             # SettingsDictWrapper.set skips the default settings change
             # recording
             settings.set(key, value)
