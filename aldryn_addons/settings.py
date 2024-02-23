@@ -1,4 +1,5 @@
-import imp
+import importlib.machinery
+import importlib.util
 import os
 import shutil
 import uuid
@@ -176,6 +177,20 @@ def load(settings, **kwargs):
         debug_count = dump(settings, debug_count, addon_name)
 
 
+def load_source(modname, filename):
+    """Compatibility function to replace usage of `imp` module."""
+    loader = importlib.machinery.SourceFileLoader(modname, filename)
+    spec = importlib.util.spec_from_file_location(
+        modname, filename, loader=loader
+    )
+    module = importlib.util.module_from_spec(spec)
+    # The module is always executed and not cached in sys.modules.
+    # Uncomment the following line to cache the module.
+    # sys.modules[module.__name__] = module
+    loader.exec_module(module)
+    return module
+
+
 def load_addon_settings(name, path, settings, **kwargs):
     addon_json_path = kwargs.get("addon_json_path", os.path.join(path, "addon.json"))
     addon_json = utils.json_from_file(addon_json_path)
@@ -189,7 +204,7 @@ def load_addon_settings(name, path, settings, **kwargs):
         "aldryn_config_py_path", os.path.join(path, "aldryn_config.py")
     )
     if os.path.exists(aldryn_config_py_path):
-        aldryn_config = imp.load_source(
+        aldryn_config = load_source(
             "{}_{}".format(name, uuid.uuid4()).replace("-", "_"),
             aldryn_config_py_path,
         )
