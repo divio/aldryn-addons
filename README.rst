@@ -2,7 +2,7 @@
 Aldryn Addons Framework
 =======================
 
-|pypi| |build| |coverage|
+|pypi| |build|
 
 **Aldryn Addons** are re-usable django apps that follow certain conventions to
 abstract out complicated configuration from the individual django website
